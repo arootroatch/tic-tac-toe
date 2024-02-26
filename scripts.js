@@ -34,6 +34,9 @@ const allRoutes = [
   backslash,
 ];
 const corners = [b1, b3, b7, b9];
+const backslashCorners = [b1, b9];
+const forwardSlashCorners = [b3, b7];
+const sides = [b2, b4, b6, b8];
 // routes will be removed from here as they become unavailable so the PC player can determine how to win
 let availablePCRoutes = [
   firstRow,
@@ -119,8 +122,6 @@ function handleClick(event) {
   }
 }
 
-
-
 function checkWin(value) {
   console.log("checkWin");
   if (value === "O") {
@@ -150,6 +151,25 @@ function computerTurn(move) {
       setMove(b5, "O");
       computerFirstMove = b5;
       removeAvailableHumanRoutes(b5.id);
+    } else if (sides.includes(move)) {
+      // if the first move is a side square, pick one of the adjacent corners
+      let adjacentCorners = [];
+      switch (move) {
+        case b2:
+          adjacentCorners.push(b1, b3);
+          break;
+        case b4:
+          adjacentCorners.push(b1, b7);
+          break;
+        case b6:
+          adjacentCorners.push(b3, b9);
+          break;
+        case b8:
+          adjacentCorners.push(b7, b9);
+      }
+      let index = Math.floor(Math.random() * adjacentCorners.length);
+      setMove(adjacentCorners[index], "O");
+      removeAvailableHumanRoutes(adjacentCorners[index].id);
     } else {
       // always play a corner to prevent forking
       let index = Math.floor(Math.random() * corners.length);
@@ -187,7 +207,20 @@ function computerTurn(move) {
       // take the center if it still isn't taken
       if (availableBtns.includes(b5)) {
         setMove(b5, "O");
-        removeAvailableHumanRoutes(b5.id, "O");
+        removeAvailableHumanRoutes(b5.id);
+      } else if (
+        (backslashCorners.includes(humanFirstMove) &&
+          backslashCorners.includes(humanSecondMove)) ||
+        (forwardSlashCorners.includes(humanFirstMove) &&
+          forwardSlashCorners.includes(humanSecondMove))
+      ) {
+        console.log('opposing');
+        // if the human played opposing corners, play a side square
+        let index = Math.floor(Math.random() * sides.length);
+        console.log(index)
+        console.log(sides[index]);
+        setMove(sides[index], "O");
+        removeAvailableHumanRoutes(sides[index].id);
       } else {
         // look at which of the available routes our first move is in
         let computerOpenRoutes = [];
