@@ -9,6 +9,7 @@ body {
   color: whitesmoke;
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  padding: 10px;
 }
 
 #container {
@@ -24,6 +25,7 @@ button {
   font-size: 80px;
   width: 100px;
   height: 100px;
+  padding: 0;
 }
 button:hover {
   background-color: rgba(201, 1, 201, 0.678);

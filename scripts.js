@@ -56,7 +56,6 @@ let availableHumanRoutes = [
   backslash,
 ];
 // arrays to track each player's moves in context of winning combinations
-// empty strings as placeholders to be able to insert values at specific indices
 let firstRowX = [];
 let secondRowX = [];
 let thirdRowX = [];
@@ -119,6 +118,8 @@ function handleClick(event) {
     }, 2000);
   }
 }
+
+
 
 function checkWin(value) {
   console.log("checkWin");
