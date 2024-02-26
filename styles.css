@@ -10,6 +10,8 @@ body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   padding: 10px;
+  padding-bottom: 50px;
+  overflow: hidden;
 }
 
 #container {
@@ -38,10 +40,11 @@ button:disabled {
 #message {
   font-size: 1.5rem;
   padding-bottom: 1.5rem;
+  text-align: center;
 }
 
 #restart {
-  margin: 20px;
+  margin: 40px;
   padding: 10px;
   border-radius: 5px;
   font-size: 1.2rem;
