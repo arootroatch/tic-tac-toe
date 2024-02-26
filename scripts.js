@@ -608,9 +608,6 @@ function block() {
   console.log("block");
   // check for two in a row, block the third move if available, remove from possible routes
 
-  // remove empty strings from route arrays so we can use .length accurately
-  // let trimmed = xRoutes.map((route) => route.filter((i) => i !== ""));
-
   // find the index of the route that needs to be blocked
   let blocked = false;
   for (let i = 0; i < xRoutes.length; i++) {
