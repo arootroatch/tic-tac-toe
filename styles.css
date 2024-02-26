@@ -1,0 +1,47 @@
+body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: rgb(0, 57, 97);
+  box-sizing: border-box;
+  color: whitesmoke;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+button {
+  background-color: rgba(151, 2, 159, 0.785);
+  cursor: pointer;
+  color: whitesmoke;
+}
+.game-btn {
+  font-size: 80px;
+  width: 100px;
+  height: 100px;
+}
+button:hover {
+  background-color: rgba(201, 1, 201, 0.678);
+}
+
+button:disabled {
+  background-color: rgba(138, 1, 138, 0.649);
+}
+
+#message {
+  font-size: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+#restart {
+  margin: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  letter-spacing: 0.1rem;
+}
