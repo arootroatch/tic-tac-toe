@@ -212,8 +212,6 @@ function computerTurn(move) {
       }
     }
   }
-  
-  
   if (!gameOver) {
     availableBtns.forEach((btn) => btn.removeAttribute("disabled"));
     message.innerHTML = "Your turn!";
