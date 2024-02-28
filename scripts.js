@@ -124,18 +124,17 @@ function handleClick(event) {
 
 function checkWin(value) {
   if (value === "O") {
-    for (let i = 0; i < oRoutes.length && !gameOver; i++) {
-      if (oRoutes[i].length === 3) {
+    oRoutes.forEach((route) => {
+      if (route.length === 3) {
         endGame("You lose! Please try again.");
-        gameOver = true;
       }
-    }
+    });
   } else if (value === "X") {
-    for (let i = 0; i < xRoutes.length && !gameOver; i++) {
-      if (xRoutes[i].length === 3) {
+    xRoutes.forEach((route) => {
+      if (route.length === 3) {
         endGame("You win!");
       }
-    }
+    });
   }
 }
 
@@ -210,12 +209,10 @@ function computerTurn(move) {
         removeAvailableRoutes(availableHumanRoutes, sides[index].id);
       } else {
         // look at which of the available routes our first move is in
-        let computerOpenRoutes = [];
-        availablePCRoutes.forEach((route) => {
-          if (route.includes(computerFirstMove)) {
-            computerOpenRoutes.push(route);
-          }
-        });
+        let computerOpenRoutes = availablePCRoutes.filter((route) =>
+          route.includes(computerFirstMove)
+        );
+
         // boil that down to just the available buttons and filter our duplicates
         let computerFlat = computerOpenRoutes.flat();
         let computerOpenMoves = computerFlat.filter(
@@ -335,96 +332,53 @@ function setMove(btn, value) {
 }
 
 function removeAvailableRoutes(arr, move) {
+  function checkAndSplice(route) {
+    if (arr.includes(route)) {
+      arr.splice(arr.indexOf(route), 1);
+    }
+  }
   switch (move) {
     case "1":
-      if (arr.includes(firstRow)) {
-        arr.splice(arr.indexOf(firstRow), 1);
-      }
-      if (arr.includes(firstColumn)) {
-        arr.splice(arr.indexOf(firstColumn), 1);
-      }
-      if (arr.includes(backslash)) {
-        arr.splice(arr.indexOf(backslash), 1);
-      }
+      checkAndSplice(firstRow);
+      checkAndSplice(firstColumn);
+      checkAndSplice(backslash);
       break;
     case "2":
-      if (arr.includes(firstRow)) {
-        arr.splice(arr.indexOf(firstRow), 1);
-      }
-      if (arr.includes(secondColumn)) {
-        arr.splice(arr.indexOf(secondColumn), 1);
-      }
+      checkAndSplice(firstRow);
+      checkAndSplice(secondColumn);
       break;
     case "3":
-      if (arr.includes(firstRow)) {
-        arr.splice(arr.indexOf(firstRow), 1);
-      }
-      if (arr.includes(thirdColumn)) {
-        arr.splice(arr.indexOf(thirdColumn), 1);
-      }
-      if (arr.includes(forwardSlash)) {
-        arr.splice(arr.indexOf(forwardSlash), 1);
-      }
+      checkAndSplice(firstRow);
+      checkAndSplice(thirdColumn);
+      checkAndSplice(forwardSlash);
       break;
     case "4":
-      if (arr.includes(secondRow)) {
-        arr.splice(arr.indexOf(secondRow), 1);
-      }
-      if (arr.includes(firstColumn)) {
-        arr.splice(arr.indexOf(firstColumn), 1);
-      }
+      checkAndSplice(secondRow);
+      checkAndSplice(firstColumn);
       break;
     case "5":
-      if (arr.includes(secondRow)) {
-        arr.splice(arr.indexOf(secondRow), 1);
-      }
-      if (arr.includes(secondColumn)) {
-        arr.splice(arr.indexOf(secondColumn), 1);
-      }
-      if (arr.includes(backslash)) {
-        arr.splice(arr.indexOf(backslash), 1);
-      }
-      if (arr.includes(forwardSlash)) {
-        arr.splice(arr.indexOf(forwardSlash), 1);
-      }
+      checkAndSplice(secondRow);
+      checkAndSplice(secondColumn);
+      checkAndSplice(backslash);
+      checkAndSplice(forwardSlash);
       break;
     case "6":
-      if (arr.includes(secondRow)) {
-        arr.splice(arr.indexOf(secondRow), 1);
-      }
-      if (arr.includes(thirdColumn)) {
-        arr.splice(arr.indexOf(thirdColumn), 1);
-      }
+      checkAndSplice(secondRow);
+      checkAndSplice(thirdColumn);
       break;
     case "7":
-      if (arr.includes(thirdRow)) {
-        arr.splice(arr.indexOf(thirdRow), 1);
-      }
-      if (arr.includes(firstColumn)) {
-        arr.splice(arr.indexOf(firstColumn), 1);
-      }
-      if (arr.includes(forwardSlash)) {
-        arr.splice(arr.indexOf(forwardSlash), 1);
-      }
+      checkAndSplice(thirdRow);
+      checkAndSplice(firstColumn);
+      checkAndSplice(forwardSlash);
       break;
     case "8":
-      if (arr.includes(thirdRow)) {
-        arr.splice(arr.indexOf(thirdRow), 1);
-      }
-      if (arr.includes(secondColumn)) {
-        arr.splice(arr.indexOf(secondColumn), 1);
-      }
+      checkAndSplice(thirdRow);
+      checkAndSplice(secondColumn);
       break;
     case "9":
-      if (arr.includes(thirdRow)) {
-        arr.splice(arr.indexOf(thirdRow), 1);
-      }
-      if (arr.includes(thirdColumn)) {
-        arr.splice(arr.indexOf(thirdColumn), 1);
-      }
-      if (arr.includes(backslash)) {
-        arr.splice(arr.indexOf(backslash), 1);
-      }
+      checkAndSplice(thirdRow);
+      checkAndSplice(thirdColumn);
+      checkAndSplice(backslash);
       break;
   }
   if (round > 2) {
@@ -472,42 +426,44 @@ function win() {
 
   function isWinningMove(currentRoute, winningRoute) {
     if (currentRoute.length === 2) {
-      for (let i = 0; i < winningRoute.length; i++) {
-        if (!currentRoute.includes(winningRoute[i])) {
-          setMove(winningRoute[i], "O");
+      winningRoute.forEach((btn) => {
+        if (!currentRoute.includes(btn)) {
+          setMove(btn, "O");
         }
-      }
+      });
     }
   }
 
-  for (let i = 0; i < availablePCRoutes.length && !gameOver; i++) {
-    switch (availablePCRoutes[i]) {
-      case firstRow:
-        isWinningMove(firstRowO, firstRow);
-        break;
-      case secondRow:
-        isWinningMove(secondRowO, secondRow);
-        break;
-      case thirdRow:
-        isWinningMove(thirdRowO, thirdRow);
-        break;
-      case firstColumn:
-        isWinningMove(firstColumnO, firstColumn);
-        break;
-      case secondColumn:
-        isWinningMove(secondColumnO, secondColumn);
-        break;
-      case thirdColumn:
-        isWinningMove(thirdColumnO, thirdColumn);
-        break;
-      case forwardSlash:
-        isWinningMove(forwardSlashO, forwardSlash);
-        break;
-      case backslash:
-        isWinningMove(backslashO, backslash);
-        break;
+  availablePCRoutes.forEach((route) => {
+    if (!gameOver) {
+      switch (route) {
+        case firstRow:
+          isWinningMove(firstRowO, firstRow);
+          break;
+        case secondRow:
+          isWinningMove(secondRowO, secondRow);
+          break;
+        case thirdRow:
+          isWinningMove(thirdRowO, thirdRow);
+          break;
+        case firstColumn:
+          isWinningMove(firstColumnO, firstColumn);
+          break;
+        case secondColumn:
+          isWinningMove(secondColumnO, secondColumn);
+          break;
+        case thirdColumn:
+          isWinningMove(thirdColumnO, thirdColumn);
+          break;
+        case forwardSlash:
+          isWinningMove(forwardSlashO, forwardSlash);
+          break;
+        case backslash:
+          isWinningMove(backslashO, backslash);
+          break;
+      }
     }
-  }
+  });
 }
 
 function restart() {
