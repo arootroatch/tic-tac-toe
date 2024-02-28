@@ -14,6 +14,7 @@ let computerFirstMove;
 let humanFirstMove;
 let humanSecondMove;
 
+
 let availableBtns = [b1, b2, b3, b4, b5, b6, b7, b8, b9];
 const firstRow = [b1, b2, b3];
 const secondRow = [b4, b5, b6];
