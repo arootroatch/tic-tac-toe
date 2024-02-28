@@ -111,7 +111,6 @@ function handleClick(event) {
   removeAvailableRoutes(availablePCRoutes, event.id);
   availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
 
-
   if (!gameOver) {
     message.innerHTML = "Your opponent is thinking...";
     setTimeout(() => {
@@ -127,17 +126,14 @@ function checkWin(value) {
   if (value === "O") {
     for (let i = 0; i < oRoutes.length && !gameOver; i++) {
       if (oRoutes[i].length === 3) {
-        message.innerHTML = `You lose! Please try again`;
-        availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
+        endGame("You lose! Please try again.");
         gameOver = true;
       }
     }
   } else if (value === "X") {
     for (let i = 0; i < xRoutes.length && !gameOver; i++) {
       if (xRoutes[i].length === 3) {
-        message.innerHTML = `You win!`;
-        availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
-        gameOver = true;
+        endGame("You win!");
       }
     }
   }
@@ -275,6 +271,12 @@ function computerTurn(move) {
 }
 
 function setMove(btn, value) {
+  let arr;
+  if (value === "X") {
+    arr = xRoutes;
+  } else if (value === "O") {
+    arr = oRoutes;
+  }
   // set value of button to either X or O
   btn.innerHTML = value;
   // disable button
@@ -282,103 +284,55 @@ function setMove(btn, value) {
   // remove from available options
   availableBtns.splice(availableBtns.indexOf(btn), 1);
   // update appropriate arrays
-  if (value === "O") {
-    switch (btn) {
-      case b1:
-        firstColumnO.push(btn);
-        firstRowO.push(btn);
-        backslashO.push(btn);
-        break;
-      case b2:
-        firstRowO.push(btn);
-        secondColumnO.push(btn);
-        break;
-      case b3:
-        firstRowO.push(btn);
-        thirdColumnO.push(btn);
-        forwardSlashO.push(btn);
-        break;
-      case b4:
-        secondRowO.push(btn);
-        firstColumnO.push(btn);
-        break;
-      case b5:
-        backslashO.push(btn);
-        forwardSlashO.push(btn);
-        secondRowO.push(btn);
-        secondColumnO.push(btn);
-        break;
-      case b6:
-        secondRowO.push(btn);
-        thirdColumnO.push(btn);
-        break;
-      case b7:
-        forwardSlashO.push(btn);
-        firstColumnO.push(btn);
-        thirdRowO.push(btn);
-        break;
-      case b8:
-        thirdRowO.push(btn);
-        secondColumnO.push(btn);
-        break;
-      case b9:
-        backslashO.push(btn);
-        thirdRowO.push(btn);
-        thirdColumnO.push(btn);
-        break;
-    }
-  } else if (value === "X") {
-    switch (btn) {
-      case b1:
-        firstColumnX.push(btn);
-        firstRowX.push(btn);
-        backslashX.push(btn);
-        break;
-      case b2:
-        firstRowX.push(btn);
-        secondColumnX.push(btn);
-        break;
-      case b3:
-        firstRowX.push(btn);
-        thirdColumnX.push(btn);
-        forwardSlashX.push(btn);
-        break;
-      case b4:
-        secondRowX.push(btn);
-        firstColumnX.push(btn);
-        break;
-      case b5:
-        backslashX.push(btn);
-        forwardSlashX.push(btn);
-        secondRowX.push(btn);
-        secondColumnX.push(btn);
-        break;
-      case b6:
-        secondRowX.push(btn);
-        thirdColumnX.push(btn);
-        break;
-      case b7:
-        forwardSlashX.push(btn);
-        firstColumnX.push(btn);
-        thirdRowX.push(btn);
-        break;
-      case b8:
-        thirdRowX.push(btn);
-        secondColumnX.push(btn);
-        break;
-      case b9:
-        backslashX.push(btn);
-        thirdRowX.push(btn);
-        thirdColumnX.push(btn);
-        break;
-    }
+  switch (btn) {
+    case b1:
+      arr[3].push(btn);
+      arr[0].push(btn);
+      arr[7].push(btn);
+      break;
+    case b2:
+      arr[0].push(btn);
+      arr[4].push(btn);
+      break;
+    case b3:
+      arr[0].push(btn);
+      arr[5].push(btn);
+      arr[6].push(btn);
+      break;
+    case b4:
+      arr[1].push(btn);
+      arr[3].push(btn);
+      break;
+    case b5:
+      arr[7].push(btn);
+      arr[6].push(btn);
+      arr[1].push(btn);
+      arr[4].push(btn);
+      break;
+    case b6:
+      arr[1].push(btn);
+      arr[5].push(btn);
+      break;
+    case b7:
+      arr[6].push(btn);
+      arr[3].push(btn);
+      arr[2].push(btn);
+      break;
+    case b8:
+      arr[2].push(btn);
+      arr[4].push(btn);
+      break;
+    case b9:
+      arr[7].push(btn);
+      arr[2].push(btn);
+      arr[5].push(btn);
+      break;
   }
 
   if (round > 2) {
     checkWin(value);
   }
 }
-
 
 function removeAvailableRoutes(arr, move) {
   switch (move) {
@@ -387,10 +341,7 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(firstRow), 1);
       }
       if (arr.includes(firstColumn)) {
-        arr.splice(
-          arr.indexOf(firstColumn),
-          1
-        );
+        arr.splice(arr.indexOf(firstColumn), 1);
       }
       if (arr.includes(backslash)) {
         arr.splice(arr.indexOf(backslash), 1);
@@ -401,10 +352,7 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(firstRow), 1);
       }
       if (arr.includes(secondColumn)) {
-        arr.splice(
-          arr.indexOf(secondColumn),
-          1
-        );
+        arr.splice(arr.indexOf(secondColumn), 1);
       }
       break;
     case "3":
@@ -412,16 +360,10 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(firstRow), 1);
       }
       if (arr.includes(thirdColumn)) {
-        arr.splice(
-          arr.indexOf(thirdColumn),
-          1
-        );
+        arr.splice(arr.indexOf(thirdColumn), 1);
       }
       if (arr.includes(forwardSlash)) {
-        arr.splice(
-          arr.indexOf(forwardSlash),
-          1
-        );
+        arr.splice(arr.indexOf(forwardSlash), 1);
       }
       break;
     case "4":
@@ -429,10 +371,7 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(secondRow), 1);
       }
       if (arr.includes(firstColumn)) {
-        arr.splice(
-          arr.indexOf(firstColumn),
-          1
-        );
+        arr.splice(arr.indexOf(firstColumn), 1);
       }
       break;
     case "5":
@@ -440,19 +379,13 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(secondRow), 1);
       }
       if (arr.includes(secondColumn)) {
-        arr.splice(
-          arr.indexOf(secondColumn),
-          1
-        );
+        arr.splice(arr.indexOf(secondColumn), 1);
       }
       if (arr.includes(backslash)) {
         arr.splice(arr.indexOf(backslash), 1);
       }
       if (arr.includes(forwardSlash)) {
-        arr.splice(
-          arr.indexOf(forwardSlash),
-          1
-        );
+        arr.splice(arr.indexOf(forwardSlash), 1);
       }
       break;
     case "6":
@@ -460,10 +393,7 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(secondRow), 1);
       }
       if (arr.includes(thirdColumn)) {
-        arr.splice(
-          arr.indexOf(thirdColumn),
-          1
-        );
+        arr.splice(arr.indexOf(thirdColumn), 1);
       }
       break;
     case "7":
@@ -471,16 +401,10 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(thirdRow), 1);
       }
       if (arr.includes(firstColumn)) {
-        arr.splice(
-          arr.indexOf(firstColumn),
-          1
-        );
+        arr.splice(arr.indexOf(firstColumn), 1);
       }
       if (arr.includes(forwardSlash)) {
-        arr.splice(
-          arr.indexOf(forwardSlash),
-          1
-        );
+        arr.splice(arr.indexOf(forwardSlash), 1);
       }
       break;
     case "8":
@@ -488,10 +412,7 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(thirdRow), 1);
       }
       if (arr.includes(secondColumn)) {
-        arr.splice(
-          arr.indexOf(secondColumn),
-          1
-        );
+        arr.splice(arr.indexOf(secondColumn), 1);
       }
       break;
     case "9":
@@ -499,10 +420,7 @@ function removeAvailableRoutes(arr, move) {
         arr.splice(arr.indexOf(thirdRow), 1);
       }
       if (arr.includes(thirdColumn)) {
-        arr.splice(
-          arr.indexOf(thirdColumn),
-          1
-        );
+        arr.splice(arr.indexOf(thirdColumn), 1);
       }
       if (arr.includes(backslash)) {
         arr.splice(arr.indexOf(backslash), 1);
@@ -516,10 +434,14 @@ function removeAvailableRoutes(arr, move) {
 
 function checkTie() {
   if (availablePCRoutes.length < 1 && availableHumanRoutes.length < 1) {
-    message.innerHTML = "It's a draw!";
-    availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
-    gameOver = true;
+    endGame("It's a draw!");
   }
+}
+
+function endGame(result) {
+  message.innerHTML = result;
+  availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
+  gameOver = true;
 }
 
 function block() {
