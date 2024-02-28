@@ -466,6 +466,3 @@ function win() {
   });
 }
 
-function restart() {
-  location.reload();
-}
