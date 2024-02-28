@@ -208,57 +208,55 @@ function computerTurn(move) {
         setMove(sides[index], "O");
         removeAvailableRoutes(availableHumanRoutes, sides[index].id);
       } else {
-        // look at which of the available routes our first move is in
-        let computerOpenRoutes = availablePCRoutes.filter((route) =>
-          route.includes(computerFirstMove)
-        );
-
-        // boil that down to just the available buttons and filter our duplicates
-        let computerFlat = computerOpenRoutes.flat();
-        let computerOpenMoves = computerFlat.filter(
-          (value, index) =>
-            computerFlat.indexOf(value) === index &&
-            availableBtns.includes(value)
-        );
-
-        // of these possible routes, which one ALSO blocks their route to winning?
-        // first, find all winning routes for the human opp
-        let humanOpenRoutes = [];
-        availableHumanRoutes.forEach((route) => {
-          if (
-            route.includes(humanFirstMove) ||
-            route.includes(humanSecondMove)
-          ) {
-            if (!route.includes(computerFirstMove)) {
-              humanOpenRoutes.push(route);
-            }
-          }
-        });
-        // then boil that down to available buttons and filter duplicates
-        let humanFlat = humanOpenRoutes.flat();
-        let humanOpenMoves = humanFlat.filter(
-          (value, index) =>
-            humanFlat.indexOf(value) === index && availableBtns.includes(value)
-        );
-        // now the moves that are in both computerOpenMoves and humanOpenMoves are the best possible next moves
-        let overlappingMoves = computerOpenMoves.filter((move) =>
-          humanOpenMoves.includes(move)
-        );
-        // if any of these moves is a corner, we need to prioritize that to prevent forking
-        let cornerMoves = overlappingMoves.filter((move) =>
-          corners.includes(move)
-        );
-        // let's check just in case there isn't a corner move
-        let bestMoves;
-        cornerMoves.length < 1
-          ? (bestMoves = overlappingMoves)
-          : (bestMoves = cornerMoves);
-        // randomly choose one of these bestMoves and do it
-        let index = Math.floor(Math.random() * bestMoves.length);
-        setMove(bestMoves[index], "O");
-        removeAvailableRoutes(availableHumanRoutes, bestMoves[index].id);
+        findBestPossibleMoves();
       }
     }
+  }
+  
+  function findBestPossibleMoves(){
+    // look at which of the available routes our first move is in
+    let computerOpenRoutes = availablePCRoutes.filter((route) =>
+      route.includes(computerFirstMove)
+    );
+
+    // boil that down to just the available buttons and filter our duplicates
+    let computerFlat = computerOpenRoutes.flat();
+    let computerOpenMoves = computerFlat.filter(
+      (value, index) =>
+        computerFlat.indexOf(value) === index && availableBtns.includes(value)
+    );
+
+    // of these possible routes, which one ALSO blocks their route to winning?
+    // first, find all winning routes for the human opp
+    let humanOpenRoutes = [];
+    availableHumanRoutes.forEach((route) => {
+      if (route.includes(humanFirstMove) || route.includes(humanSecondMove)) {
+        if (!route.includes(computerFirstMove)) {
+          humanOpenRoutes.push(route);
+        }
+      }
+    });
+    // then boil that down to available buttons and filter duplicates
+    let humanFlat = humanOpenRoutes.flat();
+    let humanOpenMoves = humanFlat.filter(
+      (value, index) =>
+        humanFlat.indexOf(value) === index && availableBtns.includes(value)
+    );
+    // now the moves that are in both computerOpenMoves and humanOpenMoves are the best possible next moves
+    let overlappingMoves = computerOpenMoves.filter((move) =>
+      humanOpenMoves.includes(move)
+    );
+    // if any of these moves is a corner, we need to prioritize that to prevent forking
+    let cornerMoves = overlappingMoves.filter((move) => corners.includes(move));
+    // let's check just in case there isn't a corner move
+    let bestMoves;
+    cornerMoves.length < 1
+      ? (bestMoves = overlappingMoves)
+      : (bestMoves = cornerMoves);
+    // randomly choose one of these bestMoves and do it
+    let index = Math.floor(Math.random() * bestMoves.length);
+    setMove(bestMoves[index], "O");
+    removeAvailableRoutes(availableHumanRoutes, bestMoves[index].id);
   }
 
   if (!gameOver) {
