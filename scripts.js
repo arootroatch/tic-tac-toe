@@ -14,7 +14,6 @@ let computerFirstMove;
 let humanFirstMove;
 let humanSecondMove;
 
-
 let availableBtns = [b1, b2, b3, b4, b5, b6, b7, b8, b9];
 const firstRow = [b1, b2, b3];
 const secondRow = [b4, b5, b6];
@@ -60,42 +59,8 @@ let availableHumanRoutes = [
   backslash,
 ];
 // arrays to track each player's moves in context of winning combinations
-let firstRowX = [];
-let secondRowX = [];
-let thirdRowX = [];
-let firstColumnX = [];
-let secondColumnX = [];
-let thirdColumnX = [];
-let forwardSlashX = [];
-let backslashX = [];
-let xRoutes = [
-  firstRowX,
-  secondRowX,
-  thirdRowX,
-  firstColumnX,
-  secondColumnX,
-  thirdColumnX,
-  forwardSlashX,
-  backslashX,
-];
-let firstRowO = [];
-let secondRowO = [];
-let thirdRowO = [];
-let firstColumnO = [];
-let secondColumnO = [];
-let thirdColumnO = [];
-let forwardSlashO = [];
-let backslashO = [];
-let oRoutes = [
-  firstRowO,
-  secondRowO,
-  thirdRowO,
-  firstColumnO,
-  secondColumnO,
-  thirdColumnO,
-  forwardSlashO,
-  backslashO,
-];
+let xRoutes = [[], [], [], [], [], [], [], []];
+let oRoutes = [[], [], [], [], [], [], [], []];
 
 let round = 1;
 
@@ -218,7 +183,7 @@ function computerTurn(move) {
     message.innerHTML = "Your turn!";
   }
 }
-function findBestPossibleMoves(){
+function findBestPossibleMoves() {
   // look at which of the available routes our first move is in
   let computerOpenRoutes = availablePCRoutes.filter((route) =>
     route.includes(computerFirstMove)
@@ -435,31 +400,30 @@ function win() {
     if (!gameOver) {
       switch (route) {
         case firstRow:
-          isWinningMove(firstRowO, firstRow);
+          isWinningMove(oRoutes[0], firstRow);
           break;
         case secondRow:
-          isWinningMove(secondRowO, secondRow);
+          isWinningMove(oRoutes[1], secondRow);
           break;
         case thirdRow:
-          isWinningMove(thirdRowO, thirdRow);
+          isWinningMove(oRoutes[2], thirdRow);
           break;
         case firstColumn:
-          isWinningMove(firstColumnO, firstColumn);
+          isWinningMove(oRoutes[3], firstColumn);
           break;
         case secondColumn:
-          isWinningMove(secondColumnO, secondColumn);
+          isWinningMove(oRoutes[4], secondColumn);
           break;
         case thirdColumn:
-          isWinningMove(thirdColumnO, thirdColumn);
+          isWinningMove(oRoutes[5], thirdColumn);
           break;
         case forwardSlash:
-          isWinningMove(forwardSlashO, forwardSlash);
+          isWinningMove(oRoutes[6], forwardSlash);
           break;
         case backslash:
-          isWinningMove(backslashO, backslash);
+          isWinningMove(oRoutes[7], backslash);
           break;
       }
     }
   });
 }
-
