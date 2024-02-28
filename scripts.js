@@ -99,7 +99,6 @@ let oRoutes = [
 let round = 1;
 
 function handleClick(event) {
-  console.log("human");
   round === 1
     ? (humanFirstMove = event)
     : round === 2
@@ -109,7 +108,9 @@ function handleClick(event) {
   setMove(event, "X");
 
   // what winning routes did this disqualify for the PC opponent?
-  removeAvailablePCRoutes(event.id);
+  removeAvailableRoutes(availablePCRoutes, event.id);
+  availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
+
 
   if (!gameOver) {
     message.innerHTML = "Your opponent is thinking...";
@@ -123,7 +124,6 @@ function handleClick(event) {
 }
 
 function checkWin(value) {
-  console.log("checkWin");
   if (value === "O") {
     for (let i = 0; i < oRoutes.length && !gameOver; i++) {
       if (oRoutes[i].length === 3) {
@@ -144,13 +144,12 @@ function checkWin(value) {
 }
 
 function computerTurn(move) {
-  console.log("computerTurn");
   if (round === 1) {
     // if the first move was a corner, play the middle square
     if (corners.includes(move)) {
       setMove(b5, "O");
       computerFirstMove = b5;
-      removeAvailableHumanRoutes(b5.id);
+      removeAvailableRoutes(availableHumanRoutes, b5.id);
     } else if (sides.includes(move)) {
       // if the first move is a side square, pick one of the adjacent corners
       let adjacentCorners = [];
@@ -169,12 +168,12 @@ function computerTurn(move) {
       }
       let index = Math.floor(Math.random() * adjacentCorners.length);
       setMove(adjacentCorners[index], "O");
-      removeAvailableHumanRoutes(adjacentCorners[index].id);
+      removeAvailableRoutes(availableHumanRoutes, adjacentCorners[index].id);
     } else {
       // always play a corner to prevent forking
       let index = Math.floor(Math.random() * corners.length);
       setMove(corners[index], "O");
-      removeAvailableHumanRoutes(corners[index].id);
+      removeAvailableRoutes(availableHumanRoutes, corners[index].id);
       computerFirstMove = corners[index];
     }
   } else if (round > 2) {
@@ -183,44 +182,36 @@ function computerTurn(move) {
     // if no winning moves, check for places to block
     if (!gameOver) {
       let blocked = block();
-      console.log("blocked", blocked);
       // if there's no winning path and no path to block
       if (!blocked) {
-        console.log(availableBtns);
-        console.log(availableBtns.length);
         if (availableBtns.length === 1) {
           setMove(availableBtns[0], "O");
           removeAvailableHumanRoutes(availableBtns[0], "O");
         } else {
           let index = Math.floor(Math.random() * availableBtns.length);
-          removeAvailableHumanRoutes(availableBtns[index].id);
+          removeAvailableRoutes(availableHumanRoutes, availableBtns[index].id);
           setMove(availableBtns[index], "O");
-          console.log(index);
         }
       }
     }
   } else if (round === 2) {
     // check if we need to block
     let blocked = block();
-    console.log("blocked", blocked);
     if (!blocked) {
       // take the center if it still isn't taken
       if (availableBtns.includes(b5)) {
         setMove(b5, "O");
-        removeAvailableHumanRoutes(b5.id);
+        removeAvailableRoutes(availableHumanRoutes, b5.id);
       } else if (
         (backslashCorners.includes(humanFirstMove) &&
           backslashCorners.includes(humanSecondMove)) ||
         (forwardSlashCorners.includes(humanFirstMove) &&
           forwardSlashCorners.includes(humanSecondMove))
       ) {
-        console.log('opposing');
         // if the human played opposing corners, play a side square
         let index = Math.floor(Math.random() * sides.length);
-        console.log(index)
-        console.log(sides[index]);
         setMove(sides[index], "O");
-        removeAvailableHumanRoutes(sides[index].id);
+        removeAvailableRoutes(availableHumanRoutes, sides[index].id);
       } else {
         // look at which of the available routes our first move is in
         let computerOpenRoutes = [];
@@ -229,8 +220,6 @@ function computerTurn(move) {
             computerOpenRoutes.push(route);
           }
         });
-        console.log("computerFirst", computerFirstMove);
-        console.log("compOpenRoutes", computerOpenRoutes);
         // boil that down to just the available buttons and filter our duplicates
         let computerFlat = computerOpenRoutes.flat();
         let computerOpenMoves = computerFlat.filter(
@@ -238,7 +227,6 @@ function computerTurn(move) {
             computerFlat.indexOf(value) === index &&
             availableBtns.includes(value)
         );
-        console.log("computerOpen", computerOpenMoves);
 
         // of these possible routes, which one ALSO blocks their route to winning?
         // first, find all winning routes for the human opp
@@ -259,12 +247,10 @@ function computerTurn(move) {
           (value, index) =>
             humanFlat.indexOf(value) === index && availableBtns.includes(value)
         );
-        console.log("humanOpen", humanOpenMoves);
         // now the moves that are in both computerOpenMoves and humanOpenMoves are the best possible next moves
         let overlappingMoves = computerOpenMoves.filter((move) =>
           humanOpenMoves.includes(move)
         );
-        console.log("overlap", overlappingMoves);
         // if any of these moves is a corner, we need to prioritize that to prevent forking
         let cornerMoves = overlappingMoves.filter((move) =>
           corners.includes(move)
@@ -275,20 +261,20 @@ function computerTurn(move) {
           ? (bestMoves = overlappingMoves)
           : (bestMoves = cornerMoves);
         // randomly choose one of these bestMoves and do it
-        console.log("bestmoves", bestMoves);
         let index = Math.floor(Math.random() * bestMoves.length);
         setMove(bestMoves[index], "O");
-        removeAvailableHumanRoutes(bestMoves[index].id);
+        removeAvailableRoutes(availableHumanRoutes, bestMoves[index].id);
       }
     }
   }
+
   if (!gameOver) {
+    availableBtns.forEach((btn) => btn.removeAttribute("disabled"));
     message.innerHTML = "Your turn!";
   }
 }
 
 function setMove(btn, value) {
-  console.log("setMove");
   // set value of button to either X or O
   btn.innerHTML = value;
   // disable button
@@ -393,244 +379,142 @@ function setMove(btn, value) {
   }
 }
 
-function removeAvailablePCRoutes(move) {
-  console.log("removeAvailablePCRoutes");
-  switch (move) {
-    case "1":
-      if (availablePCRoutes.includes(firstRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(firstRow), 1);
-      }
-      if (availablePCRoutes.includes(firstColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(firstColumn), 1);
-      }
-      if (availablePCRoutes.includes(backslash)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(backslash), 1);
-      }
-      break;
-    case "2":
-      if (availablePCRoutes.includes(firstRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(firstRow), 1);
-      }
-      if (availablePCRoutes.includes(secondColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(secondColumn), 1);
-      }
-      break;
-    case "3":
-      if (availablePCRoutes.includes(firstRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(firstRow), 1);
-      }
-      if (availablePCRoutes.includes(thirdColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(thirdColumn), 1);
-      }
-      if (availablePCRoutes.includes(forwardSlash)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(forwardSlash), 1);
-      }
-      break;
-    case "4":
-      if (availablePCRoutes.includes(secondRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(secondRow), 1);
-      }
-      if (availablePCRoutes.includes(firstColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(firstColumn), 1);
-      }
-      break;
-    case "5":
-      if (availablePCRoutes.includes(secondRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(secondRow), 1);
-      }
-      if (availablePCRoutes.includes(secondColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(secondColumn), 1);
-      }
-      if (availablePCRoutes.includes(backslash)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(backslash), 1);
-      }
-      if (availablePCRoutes.includes(forwardSlash)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(forwardSlash), 1);
-      }
-      break;
-    case "6":
-      if (availablePCRoutes.includes(secondRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(secondRow), 1);
-      }
-      if (availablePCRoutes.includes(thirdColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(thirdColumn), 1);
-      }
-      break;
-    case "7":
-      if (availablePCRoutes.includes(thirdRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(thirdRow), 1);
-      }
-      if (availablePCRoutes.includes(firstColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(firstColumn), 1);
-      }
-      if (availablePCRoutes.includes(forwardSlash)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(forwardSlash), 1);
-      }
-      break;
-    case "8":
-      if (availablePCRoutes.includes(thirdRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(thirdRow), 1);
-      }
-      if (availablePCRoutes.includes(secondColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(secondColumn), 1);
-      }
-      break;
-    case "9":
-      if (availablePCRoutes.includes(thirdRow)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(thirdRow), 1);
-      }
-      if (availablePCRoutes.includes(thirdColumn)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(thirdColumn), 1);
-      }
-      if (availablePCRoutes.includes(backslash)) {
-        availablePCRoutes.splice(availablePCRoutes.indexOf(backslash), 1);
-      }
-      break;
-  }
-  console.log(availablePCRoutes);
-  if (round > 2) {
-    checkTie();
-  }
-}
 
-function removeAvailableHumanRoutes(move) {
-  console.log("removeAvailableHumanRoutes");
+function removeAvailableRoutes(arr, move) {
   switch (move) {
     case "1":
-      if (availableHumanRoutes.includes(firstRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(firstRow), 1);
+      if (arr.includes(firstRow)) {
+        arr.splice(arr.indexOf(firstRow), 1);
       }
-      if (availableHumanRoutes.includes(firstColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(firstColumn),
+      if (arr.includes(firstColumn)) {
+        arr.splice(
+          arr.indexOf(firstColumn),
           1
         );
       }
-      if (availableHumanRoutes.includes(backslash)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(backslash), 1);
+      if (arr.includes(backslash)) {
+        arr.splice(arr.indexOf(backslash), 1);
       }
       break;
     case "2":
-      if (availableHumanRoutes.includes(firstRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(firstRow), 1);
+      if (arr.includes(firstRow)) {
+        arr.splice(arr.indexOf(firstRow), 1);
       }
-      if (availableHumanRoutes.includes(secondColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(secondColumn),
+      if (arr.includes(secondColumn)) {
+        arr.splice(
+          arr.indexOf(secondColumn),
           1
         );
       }
       break;
     case "3":
-      if (availableHumanRoutes.includes(firstRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(firstRow), 1);
+      if (arr.includes(firstRow)) {
+        arr.splice(arr.indexOf(firstRow), 1);
       }
-      if (availableHumanRoutes.includes(thirdColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(thirdColumn),
+      if (arr.includes(thirdColumn)) {
+        arr.splice(
+          arr.indexOf(thirdColumn),
           1
         );
       }
-      if (availableHumanRoutes.includes(forwardSlash)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(forwardSlash),
+      if (arr.includes(forwardSlash)) {
+        arr.splice(
+          arr.indexOf(forwardSlash),
           1
         );
       }
       break;
     case "4":
-      if (availableHumanRoutes.includes(secondRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(secondRow), 1);
+      if (arr.includes(secondRow)) {
+        arr.splice(arr.indexOf(secondRow), 1);
       }
-      if (availableHumanRoutes.includes(firstColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(firstColumn),
+      if (arr.includes(firstColumn)) {
+        arr.splice(
+          arr.indexOf(firstColumn),
           1
         );
       }
       break;
     case "5":
-      if (availableHumanRoutes.includes(secondRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(secondRow), 1);
+      if (arr.includes(secondRow)) {
+        arr.splice(arr.indexOf(secondRow), 1);
       }
-      if (availableHumanRoutes.includes(secondColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(secondColumn),
+      if (arr.includes(secondColumn)) {
+        arr.splice(
+          arr.indexOf(secondColumn),
           1
         );
       }
-      if (availableHumanRoutes.includes(backslash)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(backslash), 1);
+      if (arr.includes(backslash)) {
+        arr.splice(arr.indexOf(backslash), 1);
       }
-      if (availableHumanRoutes.includes(forwardSlash)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(forwardSlash),
+      if (arr.includes(forwardSlash)) {
+        arr.splice(
+          arr.indexOf(forwardSlash),
           1
         );
       }
       break;
     case "6":
-      if (availableHumanRoutes.includes(secondRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(secondRow), 1);
+      if (arr.includes(secondRow)) {
+        arr.splice(arr.indexOf(secondRow), 1);
       }
-      if (availableHumanRoutes.includes(thirdColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(thirdColumn),
+      if (arr.includes(thirdColumn)) {
+        arr.splice(
+          arr.indexOf(thirdColumn),
           1
         );
       }
       break;
     case "7":
-      if (availableHumanRoutes.includes(thirdRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(thirdRow), 1);
+      if (arr.includes(thirdRow)) {
+        arr.splice(arr.indexOf(thirdRow), 1);
       }
-      if (availableHumanRoutes.includes(firstColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(firstColumn),
+      if (arr.includes(firstColumn)) {
+        arr.splice(
+          arr.indexOf(firstColumn),
           1
         );
       }
-      if (availableHumanRoutes.includes(forwardSlash)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(forwardSlash),
+      if (arr.includes(forwardSlash)) {
+        arr.splice(
+          arr.indexOf(forwardSlash),
           1
         );
       }
       break;
     case "8":
-      if (availableHumanRoutes.includes(thirdRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(thirdRow), 1);
+      if (arr.includes(thirdRow)) {
+        arr.splice(arr.indexOf(thirdRow), 1);
       }
-      if (availableHumanRoutes.includes(secondColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(secondColumn),
+      if (arr.includes(secondColumn)) {
+        arr.splice(
+          arr.indexOf(secondColumn),
           1
         );
       }
       break;
     case "9":
-      if (availableHumanRoutes.includes(thirdRow)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(thirdRow), 1);
+      if (arr.includes(thirdRow)) {
+        arr.splice(arr.indexOf(thirdRow), 1);
       }
-      if (availableHumanRoutes.includes(thirdColumn)) {
-        availableHumanRoutes.splice(
-          availableHumanRoutes.indexOf(thirdColumn),
+      if (arr.includes(thirdColumn)) {
+        arr.splice(
+          arr.indexOf(thirdColumn),
           1
         );
       }
-      if (availableHumanRoutes.includes(backslash)) {
-        availableHumanRoutes.splice(availableHumanRoutes.indexOf(backslash), 1);
+      if (arr.includes(backslash)) {
+        arr.splice(arr.indexOf(backslash), 1);
       }
       break;
   }
-  console.log(availableHumanRoutes);
   if (round > 2) {
     checkTie();
   }
 }
 
 function checkTie() {
-  console.log("checkTie");
   if (availablePCRoutes.length < 1 && availableHumanRoutes.length < 1) {
     message.innerHTML = "It's a draw!";
     availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
@@ -639,7 +523,6 @@ function checkTie() {
 }
 
 function block() {
-  console.log("block");
   // check for two in a row, block the third move if available, remove from possible routes
 
   // find the index of the route that needs to be blocked
@@ -653,19 +536,16 @@ function block() {
           availableBtns.includes(allRoutes[i][j])
         ) {
           setMove(allRoutes[i][j], "O");
-          removeAvailableHumanRoutes(allRoutes[i][j].id);
+          removeAvailableRoutes(availableHumanRoutes, allRoutes[i][j].id);
           blocked = true;
         }
       }
     }
   }
-  if (!blocked) {
-    return false;
-  } else return true;
+  return blocked;
 }
 
 function win() {
-  console.log("win()");
   // for each available route, see if we already have 2 in a row and then make the winning move
 
   function isWinningMove(currentRoute, winningRoute) {
