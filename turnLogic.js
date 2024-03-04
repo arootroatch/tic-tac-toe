@@ -1,20 +1,12 @@
-function checkWin(value) {
-  if (value === "O") {
-    oRoutes.forEach((route) => {
-      if (route.length === 3) {
-        endGame("You lose! Please try again.");
-      }
-    });
-  } else if (value === "X") {
-    xRoutes.forEach((route) => {
-      if (route.length === 3) {
-        endGame("You win!");
-      }
-    });
-  }
+export function checkWin(arr, value) {
+  arr.forEach((route) => {
+    if (route.length === 3) {
+      endGame(`${value} wins!`);
+    }
+  });
 }
 
-function setMove(btn, value) {
+export function setMove(btn, value) {
   let arr;
   if (value === "X") {
     arr = xRoutes;
@@ -74,11 +66,11 @@ function setMove(btn, value) {
   }
 
   if (round > 2) {
-    checkWin(value);
+    checkWin(arr, value);
   }
 }
 
-function removeAvailableRoutes(arr, move) {
+export function removeAvailableRoutes(arr, move) {
   function checkAndSplice(route) {
     if (arr.includes(route)) {
       arr.splice(arr.indexOf(route), 1);
@@ -133,13 +125,13 @@ function removeAvailableRoutes(arr, move) {
   }
 }
 
-function checkTie() {
+export function checkTie() {
   if (availablePCRoutes.length < 1 && availableHumanRoutes.length < 1) {
     endGame("It's a draw!");
   }
 }
 
-function endGame(result) {
+export function endGame(result) {
   message.innerHTML = result;
   availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
   gameOver = true;

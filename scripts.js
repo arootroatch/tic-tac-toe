@@ -1,3 +1,6 @@
+import { setMove, removeAvailableRoutes } from "./turnLogic.js";
+import { computerTurn } from "./computerLogic.js";
+
 const b1 = document.getElementById("1");
 const b2 = document.getElementById("2");
 const b3 = document.getElementById("3");
@@ -122,3 +125,4 @@ function handleClick(event) {
   }
 }
 
+availableBtns.forEach((btn) => btn.addEventListener("click", handleClick));

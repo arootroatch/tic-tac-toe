@@ -1,4 +1,4 @@
-function computerTurn(move) {
+export function computerTurn(move) {
   if (round === 1) {
     // if the first move was a corner, play the middle square
     if (corners.includes(move)) {
