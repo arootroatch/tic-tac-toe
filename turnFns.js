@@ -1,4 +1,4 @@
-import { availableBtns, b1, b2, b3, b4, b5, b6, b7, b8, b9, round } from "./globals.js";
+import { b1, b2, b3, b4, b5, b6, b7, b8, b9, firstRow, secondRow, thirdRow, firstColumn, secondColumn, thirdColumn, forwardSlash, backslash } from "./globals.js";
 
 export function checkWin(arr, value) {
   arr.forEach((route) => {
@@ -8,7 +8,8 @@ export function checkWin(arr, value) {
   });
 }
 
-export function setMove(btn, value, arr) {
+export function setMove(btn, value, arr, availableBtns, round) {
+  console.log(availableBtns)
   // set value of button to either X or O
   btn.innerHTML = value;
   // disable button
@@ -66,7 +67,7 @@ export function setMove(btn, value, arr) {
   }
 }
 
-export function removeAvailableRoutes(arr, move) {
+export function removeAvailableRoutes(arr, move, round, arr2) {
   function checkAndSplice(route) {
     if (arr.includes(route)) {
       arr.splice(arr.indexOf(route), 1);
@@ -116,12 +117,9 @@ export function removeAvailableRoutes(arr, move) {
       checkAndSplice(backslash);
       break;
   }
-  if (round > 2) {
-    checkTie();
-  }
 }
 
-export function checkTie() {
+export function checkTie(availablePCRoutes, availableHumanRoutes) {
   if (availablePCRoutes.length < 1 && availableHumanRoutes.length < 1) {
     endGame("It's a draw!");
   }

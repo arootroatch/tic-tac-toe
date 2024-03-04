@@ -38,4 +38,12 @@ export {
   b8,
   b9,
   allRoutes,
+  firstRow,
+  secondRow,
+  thirdRow,
+  firstColumn,
+  secondColumn,
+  thirdColumn,
+  forwardSlash,
+  backslash,
 };
