@@ -1,3 +1,5 @@
+import { availableBtns, b1, b2, b3, b4, b5, b6, b7, b8, b9, round } from "./globals.js";
+
 export function checkWin(arr, value) {
   arr.forEach((route) => {
     if (route.length === 3) {
@@ -6,13 +8,7 @@ export function checkWin(arr, value) {
   });
 }
 
-export function setMove(btn, value) {
-  let arr;
-  if (value === "X") {
-    arr = xRoutes;
-  } else if (value === "O") {
-    arr = oRoutes;
-  }
+export function setMove(btn, value, arr) {
   // set value of button to either X or O
   btn.innerHTML = value;
   // disable button
@@ -132,7 +128,7 @@ export function checkTie() {
 }
 
 export function endGame(result) {
-  message.innerHTML = result;
+  document.getElementById("message").innerHTML = result;
   availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
   gameOver = true;
 }

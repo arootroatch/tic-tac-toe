@@ -1,4 +1,25 @@
-export function computerTurn(move) {
+import { removeAvailableRoutes, setMove, firstRow, secondRow, thirdRow, firstColumn, secondColumn, thirdColumn, forwardSlash, backslash } from "./turnFns.js";
+
+export function computerTurn(move, xRoutes) {
+  let computerFirstMove;
+  let availableHumanRoutes = [
+    firstRow,
+    secondRow,
+    thirdRow,
+    firstColumn,
+    secondColumn,
+    thirdColumn,
+    forwardSlash,
+    backslash,
+  ];
+
+  let oRoutes = [[], [], [], [], [], [], [], []];
+
+  const corners = [b1, b3, b7, b9];
+  const backslashCorners = [b1, b9];
+  const forwardSlashCorners = [b3, b7];
+  const sides = [b2, b4, b6, b8];
+  
   if (round === 1) {
     // if the first move was a corner, play the middle square
     if (corners.includes(move)) {
@@ -36,26 +57,26 @@ export function computerTurn(move) {
     win();
     // if no winning moves, check for places to block
     if (!gameOver) {
-      let blocked = block();
+      let blocked = block(xRoutes);
       // if there's no winning path and no path to block
       if (!blocked) {
         if (availableBtns.length === 1) {
-          setMove(availableBtns[0], "O");
+          setMove(availableBtns[0], "O", oRoutes);
           removeAvailableHumanRoutes(availableBtns[0], "O");
         } else {
           let index = Math.floor(Math.random() * availableBtns.length);
           removeAvailableRoutes(availableHumanRoutes, availableBtns[index].id);
-          setMove(availableBtns[index], "O");
+          setMove(availableBtns[index], "O", oRoutes);
         }
       }
     }
   } else if (round === 2) {
     // check if we need to block
-    let blocked = block();
+    let blocked = block(xRoutes);
     if (!blocked) {
       // take the center if it still isn't taken
       if (availableBtns.includes(b5)) {
-        setMove(b5, "O");
+        setMove(b5, "O", oRoutes);
         removeAvailableRoutes(availableHumanRoutes, b5.id);
       } else if (
         (backslashCorners.includes(humanFirstMove) &&
@@ -65,7 +86,7 @@ export function computerTurn(move) {
       ) {
         // if the human played opposing corners, play a side square
         let index = Math.floor(Math.random() * sides.length);
-        setMove(sides[index], "O");
+        setMove(sides[index], "O", oRoutes);
         removeAvailableRoutes(availableHumanRoutes, sides[index].id);
       } else {
         findBestPossibleMoves();
@@ -120,11 +141,11 @@ function findBestPossibleMoves() {
     : (bestMoves = cornerMoves);
   // randomly choose one of these bestMoves and do it
   let index = Math.floor(Math.random() * bestMoves.length);
-  setMove(bestMoves[index], "O");
+  setMove(bestMoves[index], "O", oRoutes);
   removeAvailableRoutes(availableHumanRoutes, bestMoves[index].id);
 }
 
-function block() {
+function block(xRoutes) {
   // check for two in a row, block the third move if available, remove from possible routes
 
   // find the index of the route that needs to be blocked
@@ -164,28 +185,28 @@ function win() {
     if (!gameOver) {
       switch (route) {
         case firstRow:
-          isWinningMove(firstRowO, firstRow);
+          isWinningMove(oRoutes[0], firstRow);
           break;
         case secondRow:
-          isWinningMove(secondRowO, secondRow);
+          isWinningMove(oRoutes[1], secondRow);
           break;
         case thirdRow:
-          isWinningMove(thirdRowO, thirdRow);
+          isWinningMove(oRoutes[2], thirdRow);
           break;
         case firstColumn:
-          isWinningMove(firstColumnO, firstColumn);
+          isWinningMove(oRoutes[3], firstColumn);
           break;
         case secondColumn:
-          isWinningMove(secondColumnO, secondColumn);
+          isWinningMove(oRoutes[4], secondColumn);
           break;
         case thirdColumn:
-          isWinningMove(thirdColumnO, thirdColumn);
+          isWinningMove(oRoutes[5], thirdColumn);
           break;
         case forwardSlash:
-          isWinningMove(forwardSlashO, forwardSlash);
+          isWinningMove(oRoutes[6], forwardSlash);
           break;
         case backslash:
-          isWinningMove(backslashO, backslash);
+          isWinningMove(oRoutes[7], backslash);
           break;
       }
     }
