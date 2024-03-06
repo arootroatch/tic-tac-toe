@@ -27,6 +27,37 @@ const allRoutes = [
   backslash,
 ];
 
+let state = {
+  computerFirstMove: "",
+  humanFirstMove: "",
+  humanSecondMove: "",
+  round: 1,
+  gameOver: false,
+  availableBtns: [b1, b2, b3, b4, b5, b6, b7, b8, b9],
+  availablePCRoutes: [
+    firstRow,
+    secondRow,
+    thirdRow,
+    firstColumn,
+    secondColumn,
+    thirdColumn,
+    forwardSlash,
+    backslash,
+  ],
+  availableHumanRoutes: [
+    firstRow,
+    secondRow,
+    thirdRow,
+    firstColumn,
+    secondColumn,
+    thirdColumn,
+    forwardSlash,
+    backslash,
+  ],
+  oRoutes: [[], [], [], [], [], [], [], []],
+  xRoutes: [[], [], [], [], [], [], [], []],
+};
+
 export {
   b1,
   b2,
@@ -46,4 +77,5 @@ export {
   thirdColumn,
   forwardSlash,
   backslash,
+  state
 };

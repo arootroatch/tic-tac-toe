@@ -1,4 +1,23 @@
-import { b1, b2, b3, b4, b5, b6, b7, b8, b9, firstRow, secondRow, thirdRow, firstColumn, secondColumn, thirdColumn, forwardSlash, backslash } from "./globals.js";
+import {
+  b1,
+  b2,
+  b3,
+  b4,
+  b5,
+  b6,
+  b7,
+  b8,
+  b9,
+  firstRow,
+  secondRow,
+  thirdRow,
+  firstColumn,
+  secondColumn,
+  thirdColumn,
+  forwardSlash,
+  backslash,
+  state,
+} from "./state.js";
 
 export function checkWin(arr, value) {
   arr.forEach((route) => {
@@ -8,14 +27,19 @@ export function checkWin(arr, value) {
   });
 }
 
-export function setMove(btn, value, arr, availableBtns, round) {
-  console.log(availableBtns)
+export function setMove(btn, value) {
+  let arr = [];
+  value === "X"
+    ? (arr = state.xRoutes)
+    : value === "O"
+    ? (arr = state.oRoutes)
+    : null;
   // set value of button to either X or O
   btn.innerHTML = value;
   // disable button
   btn.setAttribute("disabled", true);
   // remove from available options
-  availableBtns.splice(availableBtns.indexOf(btn), 1);
+  state.availableBtns.splice(state.availableBtns.indexOf(btn), 1);
   // update appropriate arrays
   switch (btn) {
     case b1:
@@ -62,12 +86,12 @@ export function setMove(btn, value, arr, availableBtns, round) {
       break;
   }
 
-  if (round > 2) {
+  if (state.round > 2) {
     checkWin(arr, value);
   }
 }
 
-export function removeAvailableRoutes(arr, move, round, arr2) {
+export function removeAvailableRoutes(arr, move) {
   function checkAndSplice(route) {
     if (arr.includes(route)) {
       arr.splice(arr.indexOf(route), 1);
@@ -119,14 +143,17 @@ export function removeAvailableRoutes(arr, move, round, arr2) {
   }
 }
 
-export function checkTie(availablePCRoutes, availableHumanRoutes) {
-  if (availablePCRoutes.length < 1 && availableHumanRoutes.length < 1) {
+export function checkTie() {
+  if (
+    state.availablePCRoutes.length < 1 &&
+    state.availableHumanRoutes.length < 1
+  ) {
     endGame("It's a draw!");
   }
 }
 
 export function endGame(result) {
   document.getElementById("message").innerHTML = result;
-  availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
-  gameOver = true;
+  state.availableBtns.forEach((btn) => btn.setAttribute("disabled", true));
+  state.gameOver = true;
 }
