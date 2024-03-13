@@ -32,7 +32,7 @@ export function computerTurn(move) {
     if (corners.includes(move)) {
       setMove(b5, "O");
       state.computerFirstMove = b5;
-      removeAvailableRoutes(state.availableHumanRoutes, b5.id, round);
+      removeAvailableRoutes(state.availableHumanRoutes, b5.id);
     } else if (sides.includes(move)) {
       // if the first move is a side square, pick one of the adjacent corners
       let adjacentCorners = [];
